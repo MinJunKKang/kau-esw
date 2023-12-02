@@ -223,7 +223,7 @@ class Item:
 # 점프아이템에 대한 정의
 class Jump(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="Jump.png")
+        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Jump.png")
 
     #높게 뛰게
     def use(self, ball):
@@ -233,7 +233,7 @@ class Jump(Item):
 # 슛아이템에 대한 정의
 class Shoot(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="Shoot.png")
+        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Shoot.png")
 
     # 빠르게 날아가기
     def use(self, ball):
@@ -243,7 +243,7 @@ class Shoot(Item):
 
 class Teleport(Item):
     def __init__(self, spawn_position, command = None):
-        super().__init__(spawn_position, image_path="Teleport.png")
+        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Teleport.png")
 
     def use(self, ball):
         super().use(ball)
@@ -256,7 +256,7 @@ class Teleport(Item):
 
 class Star(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="Star.png")
+        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Star.png")
 
     def use(self, ball):
         super().use(ball)
@@ -264,7 +264,7 @@ class Star(Item):
 
 class Dark_Star(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="Dark_Star.png")
+        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Dark_Star.png")
 
     def use(self, ball):
         super().use(ball)
@@ -272,7 +272,7 @@ class Dark_Star(Item):
 
 class L_Dark_Star(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="L_Dark_Star.png")
+        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/L_Dark_Star.png")
 
     def use(self, ball):
         super().use(ball)
@@ -283,14 +283,14 @@ my_circle = Ball((10, 140))
 
 while True:
     if my_circle.stage == 0:
-        background_image = Image.open("Start.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Start.png")
         joystick.disp.image(background_image)
 
     if my_circle.stage == 0 and not joystick.button_A.value:
         # 게임 세계에 아이템 추가
         items = [Shoot((30, joystick.height - 22)), Star((220, joystick.height - 24))]  # 필요한 만큼 추가
         # 배경 이미지 불러오기
-        background_image = Image.open("Tutorial_shoot.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Tutorial_shoot.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 60), (230, 240)), ((120,240), (230,240))]
@@ -347,7 +347,7 @@ while True:
         items = [Star((30, joystick.height - 24)), Jump((200, joystick.height - 22))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("Tutorial_jump.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Tutorial_jump.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 116), (230,239)), ((116, 157), (166,239)), ((116,239), (230, 239))]
@@ -412,7 +412,7 @@ while True:
         items = [Teleport((150, joystick.height - 22)), Star((220, joystick.height - 24))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("Tutorial_teleport.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Tutorial_teleport.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 17), (230, 240)), ((50,60), (230,240)), ((93,103), (230,240)), ((136,240), (230,240)), ((164, 170), (151, 230))]
@@ -474,7 +474,7 @@ while True:
         items = [Teleport((60, joystick.height - 22)), Dark_Star((12, joystick.height - 24)), Teleport((12, joystick.height - 60)), Teleport((100, joystick.height - 22)), Dark_Star((joystick.width / 2, joystick.height / 2)), Shoot((joystick.width - 12, 121))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("map_1.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/map_1.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 146), (230, 240)), ((147, 158), (218,230)), ((159,170), (206,218)), ((171,182), (194,206)), ((183, 194), (182, 194)), ((195,206), (170,182)), ((207,218), (158,170)), ((219,240), (134,158))
@@ -537,7 +537,7 @@ while True:
         items = [Jump((120, 217)), Jump((220, 140)), Jump((180, 105)), Jump((220, 70)), Shoot((180, 35)), Shoot((120, 70)), Jump((90, 70)), Dark_Star((20, 50))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("map_2.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/map_2.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 240), (230, 240))]
@@ -597,7 +597,7 @@ while True:
                          Teleport((185, 83)), Jump((130, 52))]  # 필요한 만큼 추가
         
         # 배경 이미지 불러오기
-        background_image = Image.open("test.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/test.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 97), (230, 240)), ((193,240), (230,240)), ((142, 149), (34, 199)),
@@ -653,7 +653,7 @@ while True:
             joystick.disp.image(my_image)
 
     if my_circle.stage == 7:
-        background_image = Image.open("Finish.png")
+        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Finish.png")
         joystick.disp.image(background_image)
         
         if not joystick.button_B.value:
