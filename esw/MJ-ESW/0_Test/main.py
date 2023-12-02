@@ -1,5 +1,4 @@
 import time
-import random
 from colorsys import hsv_to_rgb
 import board
 from digitalio import DigitalInOut, Direction
@@ -114,6 +113,9 @@ class Ball:
         
         # 바닥에 부딪히는지 확인
         self.check_bottom_collision()
+
+        # 천장에 부딪히는지 확인
+        self.check_top_collision()
         
         # 라즈베리 파이의 높이보다 낮아지면 다시 시작
         if self.position[3] >= 240:
@@ -133,6 +135,19 @@ class Ball:
     def set_bottom_floor_ranges(self, bottom_floor_ranges):
         self.bottom_floor_ranges = bottom_floor_ranges
 
+    def check_top_collision(self):
+        for bottom_floor_range in self.bottom_floor_ranges:
+            x_range, y_value = bottom_floor_range
+            if (
+                x_range[0] <= (self.position[0] + self.position[2]) / 2  < x_range[1]
+                and self.position[1] <= y_value[1]
+                and self.position[3] >= y_value[1]
+            ):
+                self.position[3] = y_value[1] + 2.1 * self.size
+                self.position[1] = y_value[1] + 0.1 * self.size
+                self.velocity *= -1
+
+
     # 바닥 부딪힘 확인 함수 정의
     def check_bottom_collision(self):
         for bottom_floor_range in self.bottom_floor_ranges:
@@ -140,7 +155,7 @@ class Ball:
             if (
                 x_range[0] <= (self.position[0] + self.position[2]) / 2  < x_range[1]
                 and self.position[3] >= y_value[0]
-                and self.position[1] <= y_value[1]
+                and self.position[1] <= y_value[0]
             ):
                 # 시간이 안맞아서 바닥 위에서 튕기지 않아 위치를 수정해주는 코드를 추가
                 self.position[3] = y_value[0]
@@ -208,7 +223,7 @@ class Item:
 # 점프아이템에 대한 정의
 class Jump(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Jump.png")
+        super().__init__(spawn_position, image_path="Jump.png")
 
     #높게 뛰게
     def use(self, ball):
@@ -218,7 +233,7 @@ class Jump(Item):
 # 슛아이템에 대한 정의
 class Shoot(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Shoot.png")
+        super().__init__(spawn_position, image_path="Shoot.png")
 
     # 빠르게 날아가기
     def use(self, ball):
@@ -228,7 +243,7 @@ class Shoot(Item):
 
 class Teleport(Item):
     def __init__(self, spawn_position, command = None):
-        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Teleport.png")
+        super().__init__(spawn_position, image_path="Teleport.png")
 
     def use(self, ball):
         super().use(ball)
@@ -241,7 +256,7 @@ class Teleport(Item):
 
 class Star(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Star.png")
+        super().__init__(spawn_position, image_path="Star.png")
 
     def use(self, ball):
         super().use(ball)
@@ -249,25 +264,33 @@ class Star(Item):
 
 class Dark_Star(Item):
     def __init__(self, spawn_position):
-        super().__init__(spawn_position, image_path="/home/kau-esw/esw/MJ-ESW/0_Test/Dark_Star.png")
+        super().__init__(spawn_position, image_path="Dark_Star.png")
 
     def use(self, ball):
         super().use(ball)
         ball.stage += 1
 
-my_circle = Ball((10, 140))
+class L_Dark_Star(Item):
+    def __init__(self, spawn_position):
+        super().__init__(spawn_position, image_path="L_Dark_Star.png")
 
+    def use(self, ball):
+        super().use(ball)
+        ball.stage += 1
+
+
+my_circle = Ball((10, 140))
 
 while True:
     if my_circle.stage == 0:
-        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Start.png")
+        background_image = Image.open("Start.png")
         joystick.disp.image(background_image)
 
     if my_circle.stage == 0 and not joystick.button_A.value:
         # 게임 세계에 아이템 추가
         items = [Shoot((30, joystick.height - 22)), Star((220, joystick.height - 24))]  # 필요한 만큼 추가
         # 배경 이미지 불러오기
-        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Tutorial_shoot.png")
+        background_image = Image.open("Tutorial_shoot.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 60), (230, 240)), ((120,240), (230,240))]
@@ -324,7 +347,7 @@ while True:
         items = [Star((30, joystick.height - 24)), Jump((200, joystick.height - 22))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Tutorial_jump.png")
+        background_image = Image.open("Tutorial_jump.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 116), (230,239)), ((116, 157), (166,239)), ((116,239), (230, 239))]
@@ -381,13 +404,15 @@ while True:
             # Update display
             joystick.disp.image(my_image)
 
+            time.sleep(0.01)
+
     if my_circle.stage == 2:
         
         
         items = [Teleport((150, joystick.height - 22)), Star((220, joystick.height - 24))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Tutorial_teleport.png")
+        background_image = Image.open("Tutorial_teleport.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 17), (230, 240)), ((50,60), (230,240)), ((93,103), (230,240)), ((136,240), (230,240)), ((164, 170), (151, 230))]
@@ -449,7 +474,7 @@ while True:
         items = [Teleport((60, joystick.height - 22)), Dark_Star((12, joystick.height - 24)), Teleport((12, joystick.height - 60)), Teleport((100, joystick.height - 22)), Dark_Star((joystick.width / 2, joystick.height / 2)), Shoot((joystick.width - 12, 121))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/map_1.png")
+        background_image = Image.open("map_1.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 146), (230, 240)), ((147, 158), (218,230)), ((159,170), (206,218)), ((171,182), (194,206)), ((183, 194), (182, 194)), ((195,206), (170,182)), ((207,218), (158,170)), ((219,240), (134,158))
@@ -512,7 +537,7 @@ while True:
         items = [Jump((120, 217)), Jump((220, 140)), Jump((180, 105)), Jump((220, 70)), Shoot((180, 35)), Shoot((120, 70)), Jump((90, 70)), Dark_Star((20, 50))]  # 필요한 만큼 추가
 
         # 배경 이미지 불러오기
-        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/map_2.png")
+        background_image = Image.open("map_2.png")
 
         # 바닥 영역 정의
         bottom_floor_ranges = [((0, 240), (230, 240))]
@@ -567,7 +592,68 @@ while True:
             joystick.disp.image(my_image)
 
     if my_circle.stage == 6:
-        background_image = Image.open("/home/kau-esw/esw/MJ-ESW/0_Test/Finish.png")
+        # 게임 세계에 아이템 추가
+        items = [Shoot((30, joystick.height - 22)), Jump((60, joystick.height - 22)), Jump((220, joystick.height - 22)), Jump((220, joystick.height - 70)), L_Dark_Star((12, 35)),
+                         Teleport((185, 83)), Jump((130, 52))]  # 필요한 만큼 추가
+        
+        # 배경 이미지 불러오기
+        background_image = Image.open("test.png")
+
+        # 바닥 영역 정의
+        bottom_floor_ranges = [((0, 97), (230, 240)), ((193,240), (230,240)), ((142, 149), (34, 199)),
+                               ((155, 213), (137, 146)), ((219, 240), (115, 125)), ((173, 213), (95, 104)), ((17, 106), (59, 68))]
+        my_circle.set_bottom_floor_ranges(bottom_floor_ranges)
+
+        my_circle.set_position((10, 140))
+        my_circle.velocity = 0
+
+        while my_circle.stage == 6:
+
+            if my_circle.state == 'die':
+                my_circle.reset_game((10,140))
+                items = [Shoot((30, joystick.height - 22)), Jump((60, joystick.height - 22)), Jump((220, joystick.height - 22)), Jump((220, joystick.height - 70)), L_Dark_Star((12, 35)),
+                         Teleport((185, 83)), Jump((130, 52))]  # 필요한 만큼 추가
+                my_circle.state = None
+
+            command = {'move': False, 'left_pressed': False, 'right_pressed': False}
+
+            if not joystick.button_L.value:  # 왼쪽 버튼이 눌린 경우
+                command['left_pressed'] = True
+                command['move'] = True
+
+            if not joystick.button_R.value:  # 오른쪽 버튼이 눌린 경우
+                command['right_pressed'] = True
+                command['move'] = True
+
+            my_circle.move(command)
+            my_circle.collision_check(items)  # 아이템과의 충돌 확인 및 아이템 사용
+            
+                
+            # 배경 이미지로 설정
+            my_image.paste(background_image, (0, 0))
+            
+
+            # 아이템을 가지고 있다면 주황색으로, 아니면 노란색으로
+            if my_circle.items_queue:
+                my_draw.ellipse(tuple(my_circle.position), outline=my_circle.outline, fill=(255, 165, 0, 255))
+            else:
+                my_draw.ellipse(tuple(my_circle.position), outline=my_circle.outline, fill=(255, 255, 0))
+
+
+            # 아이템 그리기
+            for _item in items:
+                if not _item.is_collected:
+                    # 아이템 이미지를 그리기
+                    if _item.image:
+                        my_image.paste(_item.image, (int(_item.position[0]), int(_item.position[1])))
+                    else:
+                        my_draw.rectangle(tuple(_item.position), outline=_item.outline, fill=None)
+
+            # Update display
+            joystick.disp.image(my_image)
+
+    if my_circle.stage == 7:
+        background_image = Image.open("Finish.png")
         joystick.disp.image(background_image)
         
         if not joystick.button_B.value:
